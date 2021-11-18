@@ -1,6 +1,32 @@
-const { User } = require('../models/user');
-const { Product, validate } = require('../models/product'); const express = require('express');
+const { User, validateUser } = require('../models/user');
+const { Product, validate } = require('../models/product'); 
+const bcrypt = require('bcrypt');
+const config = require('config');
+const jwt = require('jsonwebtoken');
+const express = require('express');
 const router = express.Router();
+
+router.post('/', async (req, res) => {
+    try {
+        const { error } = validateUser(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
+
+        let user = await User.findOne({ email: req.body.email });
+        if (user) return res.status(400).send('This email is already registered with us.');
+        
+        const salt = await bcrypt.genSalt(10);
+        user = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: await bcrypt.hash (req.body.password, salt),
+        });
+
+        await user.save();
+        return res.send({ _id: user._id, name: user.name, email: user.email }); 
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`); 
+    }
+  });
 
 router.post('/:userId/shoppingcart/:productId', async (req, res) => { 
     try {
@@ -61,21 +87,5 @@ router.delete('/:userId/shoppingcart/:productId', async (req, res) => {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });
-
-router.post('/', async (req, res) => {
-    try {
-        const { error } = validateUser(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
-        let user = await User.findOne({ email: req.body.email });
-        if (user) return res.status(400).send('This email is already registered with us.');
-            user = new User({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-        });
-        await user.save();
-        return res.send({ _id: user._id, name: user.name, email: user.email }); } catch (ex) {
-        return res.status(500).send(`Internal Server Error: ${ex}`); }
-  });
 
 module.exports = router;
