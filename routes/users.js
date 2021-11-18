@@ -1,8 +1,7 @@
 const { User, validateUser } = require('../models/user');
 const { Product, validate } = require('../models/product'); 
 const bcrypt = require('bcrypt');
-const config = require('config');
-const jwt = require('jsonwebtoken');
+const auth = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
 
@@ -22,13 +21,19 @@ router.post('/', async (req, res) => {
         });
 
         await user.save();
-        return res.send({ _id: user._id, name: user.name, email: user.email }); 
-    }   catch (ex) {
-        return res.status(500).send(`Internal Server Error: ${ex}`); 
-    }
-  });
 
-router.post('/:userId/shoppingcart/:productId', async (req, res) => { 
+        const token = user.generateAuthToken();
+        
+        return res
+        .header('x-auth-token', token)
+        .header('access-control-expose-headers', 'x-auth-token')
+        .send({ _id: user._id, name: user.name, email: user.email });
+
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`); }
+});
+
+router.post('/:userId/shoppingcart/:productId', auth, async (req, res) => { 
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user with id "${req.params.userId}" does not exist.`);
@@ -47,7 +52,7 @@ router.post('/:userId/shoppingcart/:productId', async (req, res) => {
 
 });
 
-router.put('/:userId/shoppingcart/:productId', async (req, res) => { 
+router.put('/:userId/shoppingcart/:productId', auth, async (req, res) => { 
     try {
         const { error } = validate(req.body);
         if (error) return res.status(400).send(error);
@@ -71,7 +76,7 @@ router.put('/:userId/shoppingcart/:productId', async (req, res) => {
 });
 
 
-router.delete('/:userId/shoppingcart/:productId', async (req, res) => { 
+router.delete('/:userId/shoppingcart/:productId', auth, async (req, res) => { 
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user with id "${req.params.userId}" does not exist.`);
