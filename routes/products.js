@@ -13,6 +13,7 @@ router.post('/', async (req, res) => {
         const product = new Product({
             name: req.body.name,
             description: req.body.description,
+            size: req.body.size,
             category: req.body.category,
             price: req.body.price,
         });
@@ -28,8 +29,7 @@ router.delete('/:id', async (req, res) => {
     try {
   const product = await Product.findByIdAndRemove(req.params.id);
   if (!product)
-  return res.status(400).send(`The product with id "${req.params.id}" d
-  oes not exist.`);
+  return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
       return res.send(product);
   } catch (ex) {
   return res.status(500).send(`Internal Server Error: ${ex}`);
@@ -49,8 +49,7 @@ router.get('/:id', async (req, res) => {
     try {
   const product = await Product.findById(req.params.id);
   if (!product)
-  return res.status(400).send(`The product with id "${req.params.id}" d
-  oes not exist.`);
+  return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
       return res.send(product);
   } catch (ex) {
   return res.status(500).send(`Internal Server Error: ${ex}`);

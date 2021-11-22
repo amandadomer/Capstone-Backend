@@ -65,6 +65,7 @@ router.put('/:userId/shoppingcart/:productId', auth, async (req, res) => {
 
         product.name = req.body.name;
         product.description = req.body.description;
+        product.size = req.body.size;
         product.category = req.body.category;
         product.price = req.body.price;
         product.dateModified = Date.now();
