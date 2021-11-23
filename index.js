@@ -1,4 +1,5 @@
 const connectDB = require('./startup/db');
+const multer = require('multer')
 const express = require('express');
 const products = require('./routes/products');
 const users = require('./routes/users');

@@ -23,7 +23,8 @@ function validateProduct(product) {
         price: Joi.number().required(),
     });
     return schema.validate(product);
-    }
+}
+
 exports.Product = Product;
 exports.validate = validateProduct;
 exports.productSchema = productSchema;

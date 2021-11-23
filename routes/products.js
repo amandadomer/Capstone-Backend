@@ -1,4 +1,5 @@
 const { Product, validate } = require('../models/product');
+const multer = require('multer')
 const auth = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
@@ -34,7 +35,8 @@ router.delete('/:id', async (req, res) => {
   } catch (ex) {
   return res.status(500).send(`Internal Server Error: ${ex}`);
   }
-  });
+
+});
 
 router.get('/', async (req, res) => {
     try {
@@ -43,7 +45,7 @@ router.get('/', async (req, res) => {
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);    
     }
-})
+});
 
 router.get('/:id', async (req, res) => {
     try {
@@ -54,7 +56,7 @@ router.get('/:id', async (req, res) => {
   } catch (ex) {
   return res.status(500).send(`Internal Server Error: ${ex}`);
   }
-  });
+});
 
 
 
