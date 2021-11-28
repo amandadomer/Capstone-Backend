@@ -1,4 +1,5 @@
 const connectDB = require('./startup/db');
+const cors = require('cors')
 const multer = require('multer')
 const express = require('express');
 const products = require('./routes/products');
@@ -6,8 +7,10 @@ const users = require('./routes/users');
 const auth = require('./routes/auth');
 const app = express();
 
+
 connectDB();
 
+app.use(cors());
 app.use(express.json());
 app.use('/api/products', products);
 app.use('/api/users', users);
