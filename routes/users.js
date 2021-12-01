@@ -34,7 +34,17 @@ router.post('/', async (req, res) => {
         return res.status(500).send(`Internal Server Error: ${ex}`); }
 });
 
-router.post('/:userId/shoppingcart/:productId', auth, async (req, res) => { 
+router.get("/:userId/shoppingcart", auth, async (req, res) =>{
+    try {
+        const user = await User.findById(req.params.userId);
+        const cart = user.shoppingCart; 
+        res.status(200).json(cart);
+    }   catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+router.post('/:userId/shoppingcart/:productId', async (req, res) => { 
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user with id "${req.params.userId}" does not exist.`);
@@ -50,30 +60,6 @@ router.post('/:userId/shoppingcart/:productId', auth, async (req, res) => {
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`); 
     }
-});
-
-router.put('/:userId/shoppingcart/:productId', auth, async (req, res) => { 
-    try {
-        const { error } = validate(req.body);
-        if (error) return res.status(400).send(error);
-
-        const user = await User.findById(req.params.userId);
-        if (!user) return res.status(400).send(`The user with ID "${req.params.userId}" does not exist.`);
-
-        const product = user.shoppingCart.id(req.params.productId);
-        if (!product) return res.status(400).send(`The product with ID "${req.params.productId}" is not in your cart.`);
-
-        product.name = req.body.name;
-        product.description = req.body.description;
-        product.size = req.body.size;
-        product.category = req.body.category;
-        product.price = req.body.price;
-        product.dateModified = Date.now();
-
-        await user.save();
-        return res.send(product);
-    }   catch (ex) {
-        return res.status(500).send(`Internal Server Error: ${ex}`); }
 });
 
 

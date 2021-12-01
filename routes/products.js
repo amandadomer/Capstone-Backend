@@ -15,7 +15,6 @@ router.post('/', async (req, res) => {
             name: req.body.name,
             description: req.body.description,
             size: req.body.size,
-            category: req.body.category,
             price: req.body.price,
             img: req.body.img,
         });
@@ -25,6 +24,7 @@ router.post('/', async (req, res) => {
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     } 
+
 });
 
 router.delete('/:id', async (req, res) => {
@@ -58,8 +58,5 @@ router.get('/:id', async (req, res) => {
   return res.status(500).send(`Internal Server Error: ${ex}`);
   }
 });
-
-
-
 
 module.exports = router;
