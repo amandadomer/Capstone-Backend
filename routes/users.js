@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
         return res.status(500).send(`Internal Server Error: ${ex}`); }
 });
 
-router.get("/:userId/shoppingcart", auth, async (req, res) =>{
+router.get("/:userId/shoppingcart", async (req, res) =>{
     try {
         const user = await User.findById(req.params.userId);
         const cart = user.shoppingCart; 

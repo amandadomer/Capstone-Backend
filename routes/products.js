@@ -1,5 +1,4 @@
 const { Product, validate } = require('../models/product');
-const multer = require('multer')
 const auth = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
@@ -27,15 +26,29 @@ router.post('/', async (req, res) => {
 
 });
 
+router.put('/:id/reviews', async (req, res) => {
+    try {
+    const product = await Product.findByIdAndUpdate(req.params.id);
+        if (!product)  
+        return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
+        product.reviews.push(req.body.text)
+
+        await product.save();
+        return res.send(product);
+    } catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});
+
 router.delete('/:id', async (req, res) => {
     try {
-  const product = await Product.findByIdAndRemove(req.params.id);
-  if (!product)
-  return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
-      return res.send(product);
-  } catch (ex) {
-  return res.status(500).send(`Internal Server Error: ${ex}`);
-  }
+        const product = await Product.findByIdAndRemove(req.params.id);
+        if (!product)
+        return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
+            return res.send(product);
+        } catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
 
 });
 
